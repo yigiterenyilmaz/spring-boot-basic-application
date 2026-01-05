@@ -3,6 +3,8 @@ package com.yigiteren.starter.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,34 +25,42 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping(path = "/rest/api/student")
 public class StudentController {
+
+    private final StudentService studentService;
+
     @Autowired
-    private StudentService studentService;
+    public StudentController(StudentService studentService){
+        this.studentService = studentService;
+    }
+
     @PostMapping(path = "/save")
-    public StudentResponseDTO saveStudent(@RequestBody @Valid StudentRequestDTO student){
-        return studentService.saveStudent(student);
+    public ResponseEntity<StudentResponseDTO> saveStudent(@RequestBody @Valid StudentRequestDTO student){
+        StudentResponseDTO saved = studentService.saveStudent(student);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
     @GetMapping(path = "/list")
-    public List<StudentResponseDTO> getAllStudents(){
-        return studentService.getAllStudents();
+    public ResponseEntity<List<StudentResponseDTO>> getAllStudents(){
+        return ResponseEntity.ok(studentService.getAllStudents());
     }
     @GetMapping(path = "/list/{id}")
-    public StudentResponseDTO findStudentByID(@PathVariable(name = "id") Integer id){
-        return studentService.findStudentByID(id);
+    public ResponseEntity<StudentResponseDTO> findStudentByID(@PathVariable(name = "id") Integer id){
+        return ResponseEntity.ok(studentService.findStudentByID(id));
     }
     @GetMapping(path = "/get-student-with-param")
-    public StudentResponseDTO getStudent(@RequestParam Integer id){
-        return studentService.findStudentByID(id);
+    public ResponseEntity<StudentResponseDTO> getStudent(@RequestParam Integer id){
+        return ResponseEntity.ok(studentService.findStudentByID(id));
     }
     @DeleteMapping(path = "/delete/{id}")
-    public StudentResponseDTO deleteStudent(@PathVariable(name = "id") Integer id){
-        return studentService.deleteStudent(id);
+    public ResponseEntity<Void> deleteStudent(@PathVariable(name = "id") Integer id){
+        studentService.deleteStudent(id);
+        return ResponseEntity.noContent().build();
     }
     @PutMapping(path = "/update/{id}")
-    public StudentResponseDTO updateStudent(@PathVariable(name = "id") Integer id, @RequestBody @Valid StudentRequestDTO dto){
-        return studentService.updateStudent(id, dto);
+    public ResponseEntity<StudentResponseDTO> updateStudent(@PathVariable(name = "id") Integer id, @RequestBody @Valid StudentRequestDTO dto){
+        return ResponseEntity.ok(studentService.updateStudent(id, dto));
     }
-    @GetMapping(path = "/list/first-name")
-    public List<StudentResponseDTO> findStudentsByFirstName(@RequestBody @Valid StudentFirstNameRequestDTO dto){
-        return studentService.findStudentByFirstName(dto);
+    @PostMapping(path = "/list/first-name")
+    public ResponseEntity<List<StudentResponseDTO>> findStudentsByFirstName(@RequestBody @Valid StudentFirstNameRequestDTO dto){
+        return ResponseEntity.ok(studentService.findStudentByFirstName(dto));
     }
 }

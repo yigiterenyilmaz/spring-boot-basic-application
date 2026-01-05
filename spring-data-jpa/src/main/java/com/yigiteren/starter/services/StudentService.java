@@ -46,12 +46,11 @@ public class StudentService {
         else return null;
     }
 
-    public StudentResponseDTO deleteStudent(Integer id){
+    public void deleteStudent(Integer id){
         Optional<Student> student = studentRepository.findById(id);
-        if(student.isEmpty()) return null;
+        if(student.isEmpty()) return;
         else{
             studentRepository.delete(student.get());
-            return returnResponseDTO(student.get());
         }
     }
 
