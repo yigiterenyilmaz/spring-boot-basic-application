@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.yigiteren.starter.entities.StudentFirstNameRequestDTO;
-import com.yigiteren.starter.entities.StudentRequestDTO;
-import com.yigiteren.starter.entities.StudentResponseDTO;
+import com.yigiteren.starter.entities.DTOs.StudentFirstNameRequestDTO;
+import com.yigiteren.starter.entities.DTOs.StudentRequestDTO;
+import com.yigiteren.starter.entities.DTOs.StudentResponseDTO;
 import com.yigiteren.starter.services.StudentService;
 
 import jakarta.validation.Valid;

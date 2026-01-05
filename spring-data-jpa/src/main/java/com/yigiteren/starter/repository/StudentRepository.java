@@ -6,10 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.yigiteren.starter.entities.School;
 import com.yigiteren.starter.entities.Student;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer>{
     @Query("SELECT s FROM Student s WHERE s.firstName = :firstName")
     List<Student> findStudentByFirstName(String firstName);
+
+    @Query("SELECT s FROM Student s WHERE s.school = :school")
+    List<Student> findBySchool(School school);
 }

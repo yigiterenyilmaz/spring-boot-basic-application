@@ -1,4 +1,4 @@
-package com.yigiteren.starter.entities;
+package com.yigiteren.starter.entities.DTOs;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;

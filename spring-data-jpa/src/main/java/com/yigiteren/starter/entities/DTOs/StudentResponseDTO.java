@@ -1,11 +1,9 @@
-package com.yigiteren.starter.entities;
+package com.yigiteren.starter.entities.DTOs;
 
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,12 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentRequestDTO {
-    @NotEmpty(message = "First Name alanı boş bırakılamaz")
-    @Size(min = 3 , max = 40)
+public class StudentResponseDTO {
+    private Integer id;
     private String firstName;
-    @Size(min = 3 , max = 40)
-    @NotEmpty(message = "Last Name alanı boş bırakılamaz")
     private String lastName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthDate;

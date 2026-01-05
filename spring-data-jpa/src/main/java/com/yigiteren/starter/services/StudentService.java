@@ -8,47 +8,49 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.yigiteren.starter.entities.School;
 import com.yigiteren.starter.entities.Student;
-import com.yigiteren.starter.entities.StudentFirstNameRequestDTO;
-import com.yigiteren.starter.entities.StudentRequestDTO;
-import com.yigiteren.starter.entities.StudentResponseDTO;
+import com.yigiteren.starter.entities.DTOs.StudentFirstNameRequestDTO;
+import com.yigiteren.starter.entities.DTOs.StudentRequestDTO;
+import com.yigiteren.starter.entities.DTOs.StudentResponseDTO;
+import com.yigiteren.starter.exceptions.StudentNotFoundException;
 import com.yigiteren.starter.repository.StudentRepository;
 
 @Service
 public class StudentService {
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
+
+    public StudentService(StudentRepository studentRepository){
+        this.studentRepository = studentRepository;
+    }
 
     public StudentResponseDTO saveStudent(StudentRequestDTO dto){
         Student s = new Student();
         BeanUtils.copyProperties(dto, s, "id");
-        studentRepository.save(s);
+        Student saved = studentRepository.save(s);
 
-        return returnResponseDTO(s);
+        return toResponseDTO(saved);
     }
 
     public List<StudentResponseDTO> getAllStudents(){
-        List<Student> students = studentRepository.findAll();
-        List<StudentResponseDTO> list = new ArrayList<>();
 
-        for (Student student : students) {
-            list.add(returnResponseDTO(student));
-        }
-
-        return list;
+        return studentRepository.findAll()
+                .stream()
+                .map(student -> toResponseDTO(student))
+                .toList();
     }
 
     public StudentResponseDTO findStudentByID(Integer id){
         Optional<Student> student = studentRepository.findById(id);
         if(student.isPresent()){
-            return returnResponseDTO(student.get());
+            return toResponseDTO(student.get());
         }
-        else return null;
+        else throw new StudentNotFoundException(id);
     }
 
     public void deleteStudent(Integer id){
         Optional<Student> student = studentRepository.findById(id);
-        if(student.isEmpty()) return;
+        if(student.isEmpty()) throw new StudentNotFoundException(id);
         else{
             studentRepository.delete(student.get());
         }
@@ -62,21 +64,26 @@ public class StudentService {
             BeanUtils.copyProperties(dto, student, "id");
             studentRepository.save(student);
             
-            return returnResponseDTO(student);
+            return toResponseDTO(student);
         }
-        return null;
+        throw new StudentNotFoundException(id);
     }
 
     public List<StudentResponseDTO> findStudentByFirstName(StudentFirstNameRequestDTO dto){
-        List<Student> students = studentRepository.findStudentByFirstName(dto.getFirstName());
-        List<StudentResponseDTO> dtoStudents = new ArrayList<>();
-        for (Student student : students) {
-            dtoStudents.add(returnResponseDTO(student));
-        }
-        return dtoStudents;
+        return studentRepository.findStudentByFirstName(dto.getFirstName())
+                .stream()
+                .map(student -> toResponseDTO(student))
+                .toList();
     }
 
-    private StudentResponseDTO returnResponseDTO(Student student){
+    public List<StudentResponseDTO> findBySchool(School school){
+        return studentRepository.findBySchool(school)
+                .stream()
+                .map(student -> toResponseDTO(student))
+                .toList();
+    }
+
+    private StudentResponseDTO toResponseDTO(Student student){
         StudentResponseDTO dto = new StudentResponseDTO();
         BeanUtils.copyProperties(student, dto);
         return dto;

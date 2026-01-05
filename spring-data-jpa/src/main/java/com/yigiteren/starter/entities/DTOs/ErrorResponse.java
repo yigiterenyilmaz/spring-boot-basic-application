@@ -1,4 +1,4 @@
-package com.yigiteren.starter.entities;
+package com.yigiteren.starter.entities.DTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
