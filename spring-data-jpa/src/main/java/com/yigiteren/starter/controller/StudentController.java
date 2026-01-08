@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yigiteren.starter.entities.DTOs.StudentFirstNameRequestDTO;
 import com.yigiteren.starter.entities.DTOs.StudentRequestDTO;
 import com.yigiteren.starter.entities.DTOs.StudentResponseDTO;
+import com.yigiteren.starter.exceptions.FeatureDisabledException;
 import com.yigiteren.starter.services.StudentService;
+import com.yigiteren.starter.services.StudentTransferService;
 
 import jakarta.validation.Valid;
 
@@ -27,10 +29,11 @@ import jakarta.validation.Valid;
 public class StudentController {
 
     private final StudentService studentService;
+    private final StudentTransferService studentTransferService;
 
-    @Autowired
-    public StudentController(StudentService studentService){
+    public StudentController(StudentService studentService,@Autowired(required = false) StudentTransferService studentTransferService){
         this.studentService = studentService;
+        this.studentTransferService = studentTransferService;
     }
 
     @PostMapping(path = "/save")
@@ -62,5 +65,11 @@ public class StudentController {
     @PostMapping(path = "/list/first-name")
     public ResponseEntity<List<StudentResponseDTO>> findStudentsByFirstName(@RequestBody @Valid StudentFirstNameRequestDTO dto){
         return ResponseEntity.ok(studentService.findStudentByFirstName(dto));
+    }
+    @PostMapping(path = "{studentID}/transfer/{schoolID}")
+    public ResponseEntity<Void> transferStudent(@PathVariable Integer studentID, @PathVariable Integer schoolID){
+        if(studentTransferService == null) throw new FeatureDisabledException("Okul Geçişi Döneminde Değiliz!");
+        studentTransferService.transfer(studentID, schoolID);
+        return ResponseEntity.noContent().build();
     }
 }

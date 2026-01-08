@@ -1,5 +1,9 @@
 package com.yigiteren.starter.exceptions;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,5 +38,12 @@ public class GlobalExceptionHandler {
             System.currentTimeMillis()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
+    @ExceptionHandler(FeatureDisabledException.class)
+    public ResponseEntity<Map<String,String>> handleFeatureDisabled(FeatureDisabledException ex){
+        Map<String,String> body = new LinkedHashMap<>();
+        body.put("HATA" , "ÖZELLİK DEVRE DIŞI");
+        body.put("SEBEP:" , ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
     }
 }
