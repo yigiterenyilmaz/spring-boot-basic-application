@@ -13,20 +13,27 @@ import com.yigiteren.starter.entities.Student;
 import com.yigiteren.starter.entities.DTOs.StudentFirstNameRequestDTO;
 import com.yigiteren.starter.entities.DTOs.StudentRequestDTO;
 import com.yigiteren.starter.entities.DTOs.StudentResponseDTO;
+import com.yigiteren.starter.exceptions.SchoolNotFoundException;
 import com.yigiteren.starter.exceptions.StudentNotFoundException;
+import com.yigiteren.starter.repository.SchoolRepository;
 import com.yigiteren.starter.repository.StudentRepository;
 
 @Service
 public class StudentService {
     private final StudentRepository studentRepository;
+    private final SchoolRepository schoolRepository;
 
-    public StudentService(StudentRepository studentRepository){
+    public StudentService(StudentRepository studentRepository , SchoolRepository schoolRepository){
         this.studentRepository = studentRepository;
+        this.schoolRepository = schoolRepository;
     }
 
     public StudentResponseDTO saveStudent(StudentRequestDTO dto){
+        School school = schoolRepository.findById(dto.getSchoolID())
+                          .orElseThrow(() -> new SchoolNotFoundException(dto.getSchoolID()));
         Student s = new Student();
-        BeanUtils.copyProperties(dto, s, "id");
+        BeanUtils.copyProperties(dto, s, "id", "schoolID");
+        s.setSchool(school);
         Student saved = studentRepository.save(s);
 
         return toResponseDTO(saved);
@@ -85,7 +92,8 @@ public class StudentService {
 
     private StudentResponseDTO toResponseDTO(Student student){
         StudentResponseDTO dto = new StudentResponseDTO();
-        BeanUtils.copyProperties(student, dto);
+        BeanUtils.copyProperties(student, dto, "school");
+        dto.setSchoolName(student.getSchool().getName());
         return dto;
     }
 }

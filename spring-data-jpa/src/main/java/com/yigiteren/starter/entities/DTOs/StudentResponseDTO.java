@@ -17,4 +17,5 @@ public class StudentResponseDTO {
     private String lastName;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthDate;
+    private String schoolName;
 }
